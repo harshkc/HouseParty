@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HouseParty</title>
-</head>
-<body>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        margin: 20px;
+        padding: 10px;
+        text-align: center;
+      }
+      #fetchWidth {
+        display: block;
+        margin: 20px auto;
+        padding: 15px 25px;
+        border-radius: 5rem;
+        border: none;
+        box-shadow: 0 0px 21px 0 rgba(0, 0, 0, 0.2),
+          0 0px 32px 0 rgba(0, 0, 0, 0.19);
+      }
+      #output {
+        margin: 20px;
+        padding: 10px;
+        text-align: center;
+        font-size: larger;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
     <h1>HouseParty</h1>
-    <!-- <button id="fetchWidth">Fetch Screen Width (From Worker)</button>
-    <div id="output">0</div> -->
+    <button id="fetchWidth">Calculate Screen Width (From Worker)</button>
+    <div id="output">0</div>
     <script src="main.js" defer></script>
-</body>
+  </body>
 </html>

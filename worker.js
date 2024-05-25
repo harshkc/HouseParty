@@ -1,53 +1,56 @@
-// self.onmessage = (event) => {
-//     if (event.data === 'fetchScreenWidth') {
-//         console.log('Worker: Received request to fetch screen width');
-
-//         // Make synchronous XHR request to Service Worker
-//         const xhr = new XMLHttpRequest();
-//         xhr.open('GET', '/fetch-screen-width', false); // `false` makes the request synchronous
-//         xhr.send();
-
-//         if (xhr.status === 200) {
-//             console.log('Worker: Received screen width from service worker:', xhr.responseText);
-//             self.postMessage(xhr.responseText);
-//         } else {
-//             console.error('Worker: Failed to fetch screen width');
-//         }
-//     }
-// };
+self.onmessage = function (e) {
+    console.log("Worker: Message received from main thread", e.data);
+    if (e.data === "calculateWidth") {
+        checkIfMobile();
+    }
+};
 
 function fetchScreenWidth() {
     // Use sync XHR to fetch value from main thread
-    console.log('Worker: Fetching window.screen.width...');
+    console.log("Worker: Fetching window.screen.width...");
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/fetch-screen-width', false); // `false` makes the request synchronous
+    xhr.open("GET", "/fetch-screen-width", false); // `false` makes the request synchronous
     xhr.send();
-  
+
     if (xhr.status === 200) {
-        console.log('Worker: Received screen width from service worker:', xhr.responseText);
-        self.postMessage(xhr.responseText);
+        console.log("Worker: Received screen width from service worker:", xhr.responseText);
+        return parseInt(xhr.responseText);
     } else {
-        console.error('Worker: Failed to fetch screen width');
+        console.error("Worker: Failed to fetch screen width");
     }
-  }
+}
 
 // Proxy to mimic window object
-const windowProxy = new Proxy({}, {
-    get: function(target, prop) {
-        if (prop === 'screen') {
-            return new Proxy({}, {
-                get: function(target, prop) {
-                    if (prop === 'width') {
-                        console.log('Worker: Fetching window.screen.width...');
-                        return fetchScreenWidth();
+const window = new Proxy(
+    {},
+    {
+        get: function (target, prop) {
+            if (prop === "screen") {
+                return new Proxy(
+                    {},
+                    {
+                        get: function (target, prop) {
+                            if (prop === "width") {
+                                console.log("Worker: Fetching window.screen.width...");
+                                return fetchScreenWidth();
+                            }
+                        },
                     }
-                }
-            });
-        }
+                );
+            }
+        },
     }
-});
+);
 
-console.log(windowProxy.screen.width); // Trigger the fetch
+function checkIfMobile() {
+    const screenWidth = window.screen.width; //triggers the fetch
 
-// Optional: Post message to main thread
-// postMessage({ type: 'result', data: windowProxy.screen.width });
+    if (screenWidth < 768) {
+        console.log("Mobile View", {screenWidth});
+    } else {
+        console.log("Desktop View", {screenWidth});
+    }
+
+    // Send the result back to the main thread
+    self.postMessage({ type: "screenWidth", width: screenWidth });
+}

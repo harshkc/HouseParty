@@ -13,16 +13,16 @@ if ('serviceWorker' in navigator) {
 const worker = new Worker('worker.js');
 
 // Handle messages from the worker
-// worker.onmessage = (event) => {
-//     console.log('Main thread received message from worker:', event.data);
-//     document.getElementById('output').innerText = `Screen Width: ${event.data}`;
-// };
+worker.onmessage = (event) => {
+    console.log('Main thread: received width from worker', event.data);
+    document.getElementById('output').innerText = `Screen Width: ${event.data.width}`;
+};
 
 // Button to initiate fetching screen width
-// document.getElementById('fetchWidth').addEventListener('click', () => {
-//     console.log('Main thread: Sending request to worker');
-//     worker.postMessage('fetchScreenWidth');
-// });
+document.getElementById('fetchWidth').addEventListener('click', () => {
+    console.log('Main thread: Sending request to worker to fetch screen width');
+    worker.postMessage('calculateWidth');
+});
 
 // Handle messages from the Service Worker
 navigator.serviceWorker.addEventListener('message', (event) => {
